@@ -118,6 +118,59 @@ fn second_task(data_entries: &Vec<DataEntry>) {
     }
 }
 
+// fn third_task(data_entries: &Vec<DataEntry>) {
+//     let learn_factor = 0.01;
+//     let mut rng = rand::thread_rng();
+//     let  weight_range = -0.1..0.1;
+//
+//     for learn_factor in [
+//         0.001, 0.01, 0.1, 0.2, 0.5, 0.8, 1.0, 2.0
+//     ] {
+//         let mut x_weights: Vec<f32> = vec![];
+//         let mut y_weights: Vec<f32> = vec![];
+//         let mut bias_weights: Vec<f32> = vec![];
+//         let mut epochs: Vec<u32> = vec![];
+//
+//         for _experiment_iter in 0..10 {
+//             let mut got_wrong_answer = true;
+//             let mut current_epochs = 0;
+//
+//             let mut perceptron = BiasedPerceptron {
+//                 x_weight: rng.gen_range(weight_range.clone()),
+//                 y_weight: rng.gen_range(weight_range.clone()),
+//                 bias_weight: rng.gen_range(weight_range.clone())
+//             };
+//
+//             while got_wrong_answer {
+//                 got_wrong_answer = false;
+//
+//                 for entry in data_entries {
+//                     if !perceptron.learn(entry, learn_factor) {
+//                         got_wrong_answer = true;
+//                     }
+//                 }
+//
+//                 current_epochs += 1;
+//             }
+//
+//             epochs.push(current_epochs);
+//             x_weights.push(perceptron.x_weight);
+//             y_weights.push(perceptron.y_weight);
+//             bias_weights.push(perceptron.bias_weight);
+//         }
+//
+//         let avg_epochs = epochs.iter().sum::<u32>() as f32 / epochs.len() as f32;
+//         let avg_x_weight = x_weights.iter().sum::<f32>() / x_weights.len() as f32;
+//         let avg_y_weight = y_weights.iter().sum::<f32>() / y_weights.len() as f32;
+//         let avg_bias_weight = bias_weights.iter().sum::<f32>() / bias_weights.len() as f32;
+//
+//         println!(
+//             "learn factor: {}, avg epochs: {}, x weight: {}, y weight: {}, bias weight: {}",
+//             learn_factor, avg_epochs, avg_x_weight, avg_y_weight, avg_bias_weight
+//         );
+//     }
+// }
+
 fn read_data() -> Vec<DataEntry> {
     let read_string = fs::read_to_string("../data_set.json").unwrap();
     serde_json::from_str(&read_string).unwrap()
