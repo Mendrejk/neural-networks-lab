@@ -72,3 +72,12 @@ learn factor: 0.02, avg epochs: 4.7, reached error: 0.20559756, x weight: 0.7366
 learn factor: 0.03, avg epochs: 3.4, reached error: 0.2083681, x weight: 0.7483674, y weight: 0.49738646, bias weight: -0.49769124
 learn factor: 0.05, avg epochs: 2.9, reached error: 0.19779778, x weight: 0.7886459, y weight: 0.5772709, bias weight: -0.5934345
 learn factor: 0.1, avg epochs: 2, reached error: 0.21271567, x weight: 0.8285847, y weight: 0.6725858, bias weight: -0.6847521
+
+z.3
+error boundary: 0.3, avg epochs: 3, reached error: 0.27687103, x weight: 0.6617611, y weight: 0.3709082, bias weight: -0.34708056
+error boundary: 0.25, avg epochs: 4, reached error: 0.22530563, x weight: 0.7128776, y weight: 0.43886465, bias weight: -0.42337242
+error boundary: 0.22, avg epochs: 4.8, reached error: 0.20540829, x weight: 0.7392472, y weight: 0.47851235, bias weight: -0.46889344
+error boundary: 0.21, avg epochs: 5, reached error: 0.20182486, x weight: 0.7438632, y weight: 0.48682866, bias weight: -0.47803402
+error boundary: 0.2, avg epochs: 5.8, reached error: 0.19220673, x weight: 0.75819576, y weight: 0.5169569, bias weight: -0.5109798
+error boundary: 0.19, avg epochs: 6.6, reached error: 0.18683045, x weight: 0.768134, y weight: 0.53948736, bias weight: -0.5354692
+error boundary: 0.18, avg epochs: 11, reached error: 0.1799027, x weight: 0.78959125, y weight: 0.60300183, bias weight: -0.6025791
