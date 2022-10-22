@@ -56,28 +56,47 @@ Nauka jest minimalnie szybsza dla funkcji aktywacji progowej bipolarnej. Prawdop
 ADALINE
 
 z.1
-weight range: -1.0..1.0, avg epochs: 7.4, reached error: 0.20106766, x weight: 0.72629744, y weight: 0.51416713, bias weight: -0.47946757
-weight range: -0.8..0.8, avg epochs: 8.8, reached error: 0.20201369, x weight: 0.7125181, y weight: 0.48986974, bias weight: -0.46003342
-weight range: -0.5..0.5, avg epochs: 8.7, reached error: 0.20354001, x weight: 0.72307736, y weight: 0.46323448, bias weight: -0.44109327
-weight range: -0.2..0.2, avg epochs: 9, reached error: 0.20421803, x weight: 0.7250218, y weight: 0.45875636, bias weight: -0.43591675
-weight range: -0.1..0.1, avg epochs: 8.8, reached error: 0.20411511, x weight: 0.72346365, y weight: 0.45929775, bias weight: -0.43623242
-weight range: -0.05..0.05, avg epochs: 9, reached error: 0.20346801, x weight: 0.7255111, y weight: 0.46027002, bias weight: -0.43758535
-weight range: -0.01..0.01, avg epochs: 9, reached error: 0.20274214, x weight: 0.7260271, y weight: 0.46221334, bias weight: -0.43973985
+
+| weight range | avg epochs | reached error | x weight | y weight | bias weight |
+|--------------|:----------:|---------------|----------|----------|-------------|
+| -1.0..1.0    |    7.4     | 0.201         | 0.726    | 0.514    | -0.479      |
+| -0.8..0.8    |    8.8     | 0.202         | 0.712    | 0.489    | -0.460      |
+| -0.5..0.5    |    8.7     | 0.203         | 0.723    | 0.463    | -0.441      |
+| -0.2..0.2    |    9.0     | 0.204         | 0.725    | 0.458    | -0.435      |
+| -0.1..0.1    |    8.8     | 0.204         | 0.723    | 0.459    | -0.436      |
+| -0.05..0.05  |    9.0     | 0.203         | 0.725    | 0.460    | -0.437      |
+| -0.01..0.01  |    9.0     | 0.202         | 0.726    | 0.462    | -0.439      |
+
+Przy bipolarnych danych wagi docelowe wynoszą około 0.7 i 0.45, więc też dla większych przedziałów wagowych nauka jest szybsza.
 
 z.2
-learn factor: 0.001, avg epochs: 70.6, reached error: 0.21903181, x weight: 0.6832651, y weight: 0.4077317, bias weight: -0.36545238
-learn factor: 0.002, avg epochs: 36.1, reached error: 0.21850638, x weight: 0.6880817, y weight: 0.41016412, bias weight: -0.36995286
-learn factor: 0.01, avg epochs: 8, reached error: 0.21374023, x weight: 0.71042204, y weight: 0.43703207, bias weight: -0.41179228
-learn factor: 0.02, avg epochs: 4.7, reached error: 0.20559756, x weight: 0.73662454, y weight: 0.4793706, bias weight: -0.46894473
-learn factor: 0.03, avg epochs: 3.4, reached error: 0.2083681, x weight: 0.7483674, y weight: 0.49738646, bias weight: -0.49769124
-learn factor: 0.05, avg epochs: 2.9, reached error: 0.19779778, x weight: 0.7886459, y weight: 0.5772709, bias weight: -0.5934345
-learn factor: 0.1, avg epochs: 2, reached error: 0.21271567, x weight: 0.8285847, y weight: 0.6725858, bias weight: -0.6847521
+
+| learn factor | avg epochs | reached error   | x weight | y weight | bias weight |
+|--------------|:----------:|-----------------|----------|----------|-------------|
+| 0.001        |    70.6    | 0.219           | 0.683    | 0.407    | -0.365      |
+| 0.002        |    36.1    | 0.218           | 0.688    | 0.410    | -0.369      |
+| 0.01         |    8.0     | 0.213           | 0.710    | 0.437    | -0.411      |
+| 0.02         |    4.7     | 0.205           | 0.736    | 0.479    | -0.468      |
+| 0.03         |    3.4     | 0.208           | 0.748    | 0.497    | -0.497      |
+| 0.05         |    2.9     | 0.197           | 0.788    | 0.577    | -0.593      |
+| 0.1          |    2.0     | 0.212           | 0.828    | 0.672    | -0.684      |
+
+Uczenie jest tym szybsze im współczynnik nauki jest większy, jednak przy większych współczynnikach nauki minimalny osiągnięty błąd jest większy, tj. algorytm uczy się mniej dokładnie.
 
 z.3
-error boundary: 0.3, avg epochs: 3, reached error: 0.27687103, x weight: 0.6617611, y weight: 0.3709082, bias weight: -0.34708056
-error boundary: 0.25, avg epochs: 4, reached error: 0.22530563, x weight: 0.7128776, y weight: 0.43886465, bias weight: -0.42337242
-error boundary: 0.22, avg epochs: 4.8, reached error: 0.20540829, x weight: 0.7392472, y weight: 0.47851235, bias weight: -0.46889344
-error boundary: 0.21, avg epochs: 5, reached error: 0.20182486, x weight: 0.7438632, y weight: 0.48682866, bias weight: -0.47803402
-error boundary: 0.2, avg epochs: 5.8, reached error: 0.19220673, x weight: 0.75819576, y weight: 0.5169569, bias weight: -0.5109798
-error boundary: 0.19, avg epochs: 6.6, reached error: 0.18683045, x weight: 0.768134, y weight: 0.53948736, bias weight: -0.5354692
-error boundary: 0.18, avg epochs: 11, reached error: 0.1799027, x weight: 0.78959125, y weight: 0.60300183, bias weight: -0.6025791
+
+| error boundary | avg epochs | reached error | x weight | y weight | bias weight |
+|----------------|:----------:|---------------|----------|----------|-------------|
+| 0.30           |    3.0     | 0.276         | 0.661    | 0.370    | -0.347      |
+| 0.25           |    4.0     | 0.225         | 0.712    | 0.438    | -0.423      |
+| 0.22           |    4.8     | 0.205         | 0.739    | 0.478    | -0.468      |
+| 0.21           |    5,0     | 0.201         | 0.743    | 0.486    | -0.478      |
+| 0.20           |    5.8     | 0.192         | 0.758    | 0.516    | -0.510      |
+| 0.19           |    6.6     | 0.186         | 0.768    | 0.539    | -0.535      |
+| 0.18           |    11.0    | 0.179         | 0.789    | 0.603    | -0.602      |
+
+Im granica błędu jest niższa tym dłużej zajmuje wyuczenie modelu. Tempo przyrostu czasu uczenia przypomina wzrost potęgowy (przy małych zmianach granicy błędu pod koniec, ilość epok uczenia podwaja się)
+
+z.4
+
+Przy odpowiednich parametrach, uczenie Adaline może być szybsze niż dla Perceptronu. Jednak potencjalnie tracimy 100% skuteczność algorytmu - tu akurat algorytm i tak w pełni się wyuczy ale nie widać tego po samej granicy błędu. Oba algorytmy mogą rozwiązać jedynie problemy rozdzielalne liniowo.
