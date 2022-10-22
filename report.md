@@ -1,3 +1,5 @@
+PERCEPTRON
+
 z.1
 
 | theta | avg epochs | x weight | y weight |
@@ -51,3 +53,13 @@ z.4
 
 Nauka jest minimalnie szybsza dla funkcji aktywacji progowej bipolarnej. Prawdopodobnie ponieważ użycie bipolarnej funkcji progowej wywołuje większy kontrast w wynikach (i uczeniu) co przyspiesza ten proces.
 
+ADALINE
+
+z.1
+weight range: -1.0..1.0, avg epochs: 7.4, reached error: 0.20106766, x weight: 0.72629744, y weight: 0.51416713, bias weight: -0.47946757
+weight range: -0.8..0.8, avg epochs: 8.8, reached error: 0.20201369, x weight: 0.7125181, y weight: 0.48986974, bias weight: -0.46003342
+weight range: -0.5..0.5, avg epochs: 8.7, reached error: 0.20354001, x weight: 0.72307736, y weight: 0.46323448, bias weight: -0.44109327
+weight range: -0.2..0.2, avg epochs: 9, reached error: 0.20421803, x weight: 0.7250218, y weight: 0.45875636, bias weight: -0.43591675
+weight range: -0.1..0.1, avg epochs: 8.8, reached error: 0.20411511, x weight: 0.72346365, y weight: 0.45929775, bias weight: -0.43623242
+weight range: -0.05..0.05, avg epochs: 9, reached error: 0.20346801, x weight: 0.7255111, y weight: 0.46027002, bias weight: -0.43758535
+weight range: -0.01..0.01, avg epochs: 9, reached error: 0.20274214, x weight: 0.7260271, y weight: 0.46221334, bias weight: -0.43973985

@@ -13,6 +13,7 @@ impl Adaline {
             data_entry.x * self.x_weight + data_entry.y * self.y_weight + self.bias_weight;
 
         let delta = data_entry.expected_result as f32 - stimulus;
+        self.delta_square_sum += delta * delta;
 
         self.x_weight += learn_factor * delta * data_entry.x;
         self.y_weight += learn_factor * delta * data_entry.y;
