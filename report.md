@@ -63,3 +63,12 @@ weight range: -0.2..0.2, avg epochs: 9, reached error: 0.20421803, x weight: 0.7
 weight range: -0.1..0.1, avg epochs: 8.8, reached error: 0.20411511, x weight: 0.72346365, y weight: 0.45929775, bias weight: -0.43623242
 weight range: -0.05..0.05, avg epochs: 9, reached error: 0.20346801, x weight: 0.7255111, y weight: 0.46027002, bias weight: -0.43758535
 weight range: -0.01..0.01, avg epochs: 9, reached error: 0.20274214, x weight: 0.7260271, y weight: 0.46221334, bias weight: -0.43973985
+
+z.2
+learn factor: 0.001, avg epochs: 70.6, reached error: 0.21903181, x weight: 0.6832651, y weight: 0.4077317, bias weight: -0.36545238
+learn factor: 0.002, avg epochs: 36.1, reached error: 0.21850638, x weight: 0.6880817, y weight: 0.41016412, bias weight: -0.36995286
+learn factor: 0.01, avg epochs: 8, reached error: 0.21374023, x weight: 0.71042204, y weight: 0.43703207, bias weight: -0.41179228
+learn factor: 0.02, avg epochs: 4.7, reached error: 0.20559756, x weight: 0.73662454, y weight: 0.4793706, bias weight: -0.46894473
+learn factor: 0.03, avg epochs: 3.4, reached error: 0.2083681, x weight: 0.7483674, y weight: 0.49738646, bias weight: -0.49769124
+learn factor: 0.05, avg epochs: 2.9, reached error: 0.19779778, x weight: 0.7886459, y weight: 0.5772709, bias weight: -0.5934345
+learn factor: 0.1, avg epochs: 2, reached error: 0.21271567, x weight: 0.8285847, y weight: 0.6725858, bias weight: -0.6847521
