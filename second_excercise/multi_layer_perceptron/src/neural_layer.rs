@@ -46,7 +46,7 @@ impl NeuralLayer {
     pub fn new(
         neuron_count: usize,
         input_size: usize,
-        activationFunction: ActivationFunction,
+        activationFunction: &ActivationFunction,
     ) -> Self {
         let mut rng = rand::thread_rng();
         let normal_distribution = rand_distr::Normal::new(0.0, STANDARD_DISTRIBUTION).unwrap();
