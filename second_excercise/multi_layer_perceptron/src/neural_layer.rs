@@ -39,7 +39,7 @@ impl ActivationFunction {
 pub struct NeuralLayer {
     weights: Array2<f64>,
     biases: Array1<f64>,
-    activationFunction: ActivationFunction,
+    activation_function: ActivationFunction,
 }
 
 impl NeuralLayer {
@@ -66,13 +66,13 @@ impl NeuralLayer {
         Self {
             weights,
             biases,
-            activationFunction,
+            activation_function: activationFunction,
         }
     }
 
     pub fn calculate(&self, inputs: &Array1<f64>) -> Array1<f64> {
         let stimuli = &self.weights.dot(inputs) + &self.biases;
 
-        stimuli.mapv_into(|stimulus| self.activationFunction.calculate(stimulus))
+        stimuli.mapv_into(|stimulus| self.activation_function.calculate(stimulus))
     }
 }
