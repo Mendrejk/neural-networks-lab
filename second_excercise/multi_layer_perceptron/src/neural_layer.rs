@@ -1,8 +1,41 @@
 use crate::config::STANDARD_DISTRIBUTION;
 use crate::neuron::Neuron;
+use std::f64::consts::E;
 
 use ndarray::{arr2, array, Array, Array1, Array2, Ix1, Ix2, ShapeBuilder};
 use rand::distributions::Distribution;
+
+enum ActivationFunction {
+    Sigmoidal,
+    HiperbolicTangent,
+    RectifiedLinearUnit,
+}
+
+impl ActivationFunction {
+    pub fn calculate(self, x: f64) -> f64 {
+        match self {
+            ActivationFunction::Sigmoidal => ActivationFunction::sigmoidal(x),
+            ActivationFunction::HiperbolicTangent => ActivationFunction::hiperbolic_tangent(x),
+            ActivationFunction::RectifiedLinearUnit => ActivationFunction::rectified_linear_unit(x),
+        }
+    }
+
+    fn sigmoidal(x: f64) -> f64 {
+        1.0 / (1.0 + E.powf(-x))
+    }
+
+    fn hiperbolic_tangent(x: f64) -> f64 {
+        2.0 / (1.0 + E.powf(-2.0 * x)) - 1.0
+    }
+
+    fn rectified_linear_unit(x: f64) -> f64 {
+        if x > 0.0 {
+            x
+        } else {
+            0.0
+        }
+    }
+}
 
 pub struct NeuralLayer<'a> {
     neurons: Array1<Neuron<'a>>,
