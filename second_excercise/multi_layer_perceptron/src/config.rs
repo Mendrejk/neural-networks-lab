@@ -1,0 +1,1 @@
+pub static STANDARD_DISTRIBUTION: f32 = 1.0;
