@@ -4,14 +4,14 @@ use std::f64::consts::E;
 use ndarray::{arr2, array, Array, Array1, Array2, Ix1, Ix2, ShapeBuilder};
 use rand::distributions::Distribution;
 
-enum ActivationFunction {
+pub enum ActivationFunction {
     Sigmoidal,
     HiperbolicTangent,
     RectifiedLinearUnit,
 }
 
 impl ActivationFunction {
-    pub fn calculate(self, x: f64) -> f64 {
+    pub fn calculate(&self, x: f64) -> f64 {
         match self {
             ActivationFunction::Sigmoidal => ActivationFunction::sigmoidal(x),
             ActivationFunction::HiperbolicTangent => ActivationFunction::hiperbolic_tangent(x),
@@ -39,10 +39,15 @@ impl ActivationFunction {
 pub struct NeuralLayer {
     weights: Array2<f64>,
     biases: Array1<f64>,
+    activationFunction: ActivationFunction,
 }
 
 impl NeuralLayer {
-    pub fn new(neuron_count: usize, input_size: usize) -> Self {
+    pub fn new(
+        neuron_count: usize,
+        input_size: usize,
+        activationFunction: ActivationFunction,
+    ) -> Self {
         let mut rng = rand::thread_rng();
         let normal_distribution = rand_distr::Normal::new(0.0, STANDARD_DISTRIBUTION).unwrap();
 
@@ -58,6 +63,16 @@ impl NeuralLayer {
                 .collect::<Vec<f64>>(),
         );
 
-        Self { weights, biases }
+        Self {
+            weights,
+            biases,
+            activationFunction,
+        }
+    }
+
+    pub fn calculate(&self, inputs: &Array1<f64>) -> Array1<f64> {
+        let stimuli = &self.weights.dot(inputs) + &self.biases;
+
+        stimuli.mapv_into(|stimulus| self.activationFunction.calculate(stimulus))
     }
 }
