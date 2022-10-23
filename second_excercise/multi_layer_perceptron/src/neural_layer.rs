@@ -1,7 +1,7 @@
 use crate::config::STANDARD_DISTRIBUTION;
 use std::f64::consts::E;
 
-use ndarray::{arr2, array, Array, Array1, Array2, Ix1, Ix2, ShapeBuilder};
+use ndarray::{Array1, Array2};
 use rand::distributions::Distribution;
 
 pub enum ActivationFunction {
