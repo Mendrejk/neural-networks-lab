@@ -17,11 +17,11 @@ impl NeuralNetwork {
         let mut neural_layers = vec![NeuralLayer::new(
             layer_size,
             INPUT_SIZE,
-            &activation_function,
+            activation_function,
         )];
         neural_layers.append(
             &mut (0..inner_layer_count)
-                .map(|_| NeuralLayer::new(layer_size, layer_size, &activation_function))
+                .map(|_| NeuralLayer::new(layer_size, layer_size, activation_function))
                 .collect::<Vec<NeuralLayer>>(),
         );
 
