@@ -1,8 +1,9 @@
 use ndarray::Array1;
 
 pub struct LearnData {
-    image_parts: Vec<f64>, // TODO - probably vec of vectors? or sth
-    expected_class: f64,   // TODO - enum
+    pub(crate) image_parts: Vec<f64>,
+    // TODO - probably vec of vectors? or sth
+    pub expected_class: usize, // TODO - enum
 }
 
 impl LearnData {

@@ -47,7 +47,7 @@ impl NeuralLayer {
     pub fn new(
         neuron_count: usize,
         input_size: usize,
-        activationFunction: ActivationFunction,
+        activation_function: ActivationFunction,
     ) -> Self {
         let mut rng = rand::thread_rng();
         let normal_distribution = rand_distr::Normal::new(0.0, STANDARD_DISTRIBUTION).unwrap();
@@ -59,7 +59,7 @@ impl NeuralLayer {
             }
         }
         let biases = Array1::from(
-            (0..input_size)
+            (0..neuron_count)
                 .map(|_| normal_distribution.sample(&mut rng) as f64)
                 .collect::<Vec<f64>>(),
         );
@@ -67,7 +67,7 @@ impl NeuralLayer {
         Self {
             weights,
             biases,
-            activation_function: activationFunction,
+            activation_function,
         }
     }
 

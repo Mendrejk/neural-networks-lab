@@ -20,7 +20,7 @@ impl SoftMaxLayer {
             }
         }
         let biases = Array1::from(
-            (0..input_size)
+            (0..neuron_count)
                 .map(|_| normal_distribution.sample(&mut rng) as f64)
                 .collect::<Vec<f64>>(),
         );
@@ -29,6 +29,7 @@ impl SoftMaxLayer {
     }
 
     pub fn calculate(&self, inputs: &Array1<f64>) -> Array1<f64> {
+        let xx = &self.weights.dot(inputs);
         let stimuli = &self.weights.dot(inputs) + &self.biases;
 
         let e_values = stimuli.mapv(|stimulus| E.powf(stimulus));
