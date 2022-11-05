@@ -29,7 +29,6 @@ impl SoftMaxLayer {
     }
 
     pub fn calculate(&self, inputs: &Array1<f64>) -> Array1<f64> {
-        let xx = &self.weights.dot(inputs);
         let stimuli = &self.weights.dot(inputs) + &self.biases;
 
         let e_values = stimuli.mapv(|stimulus| E.powf(stimulus));
