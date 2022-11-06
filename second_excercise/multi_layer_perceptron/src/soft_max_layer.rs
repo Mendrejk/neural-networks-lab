@@ -6,6 +6,7 @@ use std::f64::consts::E;
 pub struct SoftMaxLayer {
     weights: Array2<f64>,
     biases: Array1<f64>,
+    pub stimuli: Option<Array1<f64>>,
 }
 
 impl SoftMaxLayer {
@@ -25,21 +26,32 @@ impl SoftMaxLayer {
                 .collect::<Vec<f64>>(),
         );
 
-        Self { weights, biases }
+        Self {
+            weights,
+            biases,
+            stimuli: None,
+        }
     }
 
-    pub fn calculate(&self, inputs: &Array1<f64>) -> Array1<f64> {
+    pub fn calculate(&mut self, inputs: &Array1<f64>) -> Array1<f64> {
         let stimuli = &self.weights.dot(inputs) + &self.biases;
 
         let e_values = stimuli.mapv(|stimulus| E.powf(stimulus));
         let e_sum = e_values.sum();
 
-        Array1::from(
+        let activations = Array1::from(
             stimuli
                 .iter()
                 .enumerate()
                 .map(|(index, _)| e_values[index] / e_sum)
                 .collect::<Vec<f64>>(),
-        )
+        );
+
+        self.stimuli = Some(stimuli);
+        activations
+    }
+
+    pub fn calculate_activation_derivative(&self, x: f64) -> f64 {
+        1.0 / (1.0 + E.powf(-x)) // TODO - sigmoidal derivative is used here
     }
 }

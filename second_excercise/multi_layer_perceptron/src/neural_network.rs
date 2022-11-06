@@ -43,14 +43,14 @@ impl NeuralNetwork {
         }
     }
 
-    pub fn calculate(&self, learn_data: &LearnData) -> bool {
+    pub fn calculate(&mut self, learn_data: &LearnData) -> bool {
         let mut result = learn_data.to_neural_input();
 
-        for layer in &self.neural_layers {
+        for layer in &mut self.neural_layers {
             result = layer.calculate(&result);
         }
 
-        if let Some(soft_max_layer) = &self.soft_max_layer {
+        if let Some(soft_max_layer) = &mut self.soft_max_layer {
             result = soft_max_layer.calculate(&result);
         }
 
@@ -76,19 +76,35 @@ impl NeuralNetwork {
                 .unwrap()
     }
 
-    pub fn learn(&self, learn_data: &LearnData) {
+    pub fn learn(&mut self, learn_data: &LearnData) {
         let mut result = learn_data.to_neural_input();
 
-        for layer in &self.neural_layers {
+        for layer in &mut self.neural_layers {
             result = layer.calculate(&result);
         }
 
-        if let Some(soft_max_layer) = &self.soft_max_layer {
+        if let Some(soft_max_layer) = &mut self.soft_max_layer {
             result = soft_max_layer.calculate(&result);
         }
 
         println!("{:?}", result);
 
         let delta = result - learn_data.expected_class.map(|elem| *elem as f64);
+        let derivatives = if let Some(soft_max_layer) = &self.soft_max_layer {
+            soft_max_layer
+                .stimuli
+                .as_ref()
+                .unwrap()
+                .mapv(|x| soft_max_layer.calculate_activation_derivative(x))
+        } else {
+            let last_layer = self.neural_layers.last().unwrap();
+            last_layer
+                .stimuli
+                .as_ref()
+                .unwrap()
+                .mapv(|x| last_layer.activation_function.calculate_derivative(x))
+        };
+
+        // let out_error = delta *
     }
 }

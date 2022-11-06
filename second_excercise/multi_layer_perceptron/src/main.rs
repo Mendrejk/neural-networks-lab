@@ -10,7 +10,8 @@ mod soft_max_layer;
 
 fn main() {
     let (train_data, test_data) = LearnData::load_mnist();
-    let network = NeuralNetwork::new(vec![5, 3, 2], ActivationFunction::HiperbolicTangent, false);
+    let mut network =
+        NeuralNetwork::new(vec![5, 3, 2], ActivationFunction::HiperbolicTangent, false);
     println!("{}", network.calculate(train_data.first().unwrap()));
     network.learn(train_data.first().unwrap());
 }
