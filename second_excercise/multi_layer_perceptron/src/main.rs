@@ -9,10 +9,7 @@ mod neural_network;
 mod soft_max_layer;
 
 fn main() {
+    let (train_data, test_data) = LearnData::load_mnist();
     let network = NeuralNetwork::new(vec![5, 3, 2], ActivationFunction::HiperbolicTangent, false);
-    let data = LearnData {
-        image_parts: vec![0.5],
-        expected_class: 3,
-    };
-    println!("{}", network.calculate(&data));
+    println!("{}", network.calculate(train_data.first().unwrap()));
 }

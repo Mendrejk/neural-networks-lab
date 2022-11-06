@@ -1,4 +1,4 @@
-use crate::config::{INPUT_SIZE, OUTPUT_SIZE};
+use crate::config::{IMAGE_SIZE, OUTPUT_SIZE};
 use crate::learn_data::LearnData;
 use crate::neural_layer::{ActivationFunction, NeuralLayer};
 use crate::soft_max_layer::SoftMaxLayer;
@@ -17,7 +17,7 @@ impl NeuralNetwork {
     ) -> Self {
         let mut neural_layers = vec![NeuralLayer::new(
             layer_sizes[0],
-            INPUT_SIZE,
+            IMAGE_SIZE,
             activation_function,
         )];
         neural_layers.append(
@@ -45,7 +45,7 @@ impl NeuralNetwork {
     }
 
     pub fn calculate(&self, learn_data: &LearnData) -> bool {
-        let mut result: Array1<f64> = learn_data.to_array();
+        let mut result = learn_data.to_neural_input();
 
         for layer in &self.neural_layers {
             result = layer.calculate(&result);
@@ -69,6 +69,6 @@ impl NeuralNetwork {
                     }
                 });
 
-        result_tuple.0 == learn_data.expected_class
+        result_tuple.0 == learn_data.expected_class as usize
     }
 }
