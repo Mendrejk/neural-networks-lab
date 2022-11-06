@@ -14,9 +14,24 @@ pub enum ActivationFunction {
 impl ActivationFunction {
     pub fn calculate(&self, x: f64) -> f64 {
         match self {
-            ActivationFunction::Sigmoidal => ActivationFunction::sigmoidal(x),
-            ActivationFunction::HiperbolicTangent => ActivationFunction::hiperbolic_tangent(x),
-            ActivationFunction::RectifiedLinearUnit => ActivationFunction::rectified_linear_unit(x),
+            Self::Sigmoidal => Self::sigmoidal(x),
+            Self::HiperbolicTangent => Self::hiperbolic_tangent(x),
+            Self::RectifiedLinearUnit => Self::rectified_linear_unit(x),
+        }
+    }
+
+    pub fn calculate_derivative(&self, x: f64) -> f64 {
+        match self {
+            ActivationFunction::Sigmoidal => {
+                let result = Self::sigmoidal(x);
+                result * (1. - result)
+            }
+            ActivationFunction::HiperbolicTangent => {
+                let result = Self::hiperbolic_tangent(x);
+                1. - (result * result)
+            }
+            // Using softplus's derivative (so the Sigmoidal) as an approximation
+            ActivationFunction::RectifiedLinearUnit => Self::sigmoidal(x),
         }
     }
 

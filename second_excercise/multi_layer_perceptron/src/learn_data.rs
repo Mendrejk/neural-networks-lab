@@ -1,10 +1,10 @@
-use crate::config::{IMAGE_DIMENSION, IMAGE_SIZE};
+use crate::config::{IMAGE_DIMENSION, IMAGE_SIZE, OUTPUT_SIZE};
 use mnist::MnistBuilder;
 use ndarray::{Array1, Array2};
 
 pub struct LearnData {
     pub image_parts: Array2<u8>,
-    pub expected_class: Vec<u8>,
+    pub expected_class: Array1<u8>,
 }
 
 impl LearnData {
@@ -25,20 +25,20 @@ impl LearnData {
             .trn_img
             .chunks(IMAGE_SIZE)
             .map(|chunk| Array2::from_shape_vec((IMAGE_DIMENSION, IMAGE_DIMENSION), chunk.into()))
-            .zip(mnist.trn_lbl.chunks(IMAGE_SIZE))
+            .zip(mnist.trn_lbl.chunks(OUTPUT_SIZE))
             .map(|(image_parts, expected_class)| Self {
                 image_parts: image_parts.unwrap(),
-                expected_class: expected_class.into(),
+                expected_class: Array1::from_shape_vec(OUTPUT_SIZE, expected_class.into()).unwrap(),
             })
             .collect();
         let test_data = mnist
             .tst_img
             .chunks(IMAGE_SIZE)
             .map(|chunk| Array2::from_shape_vec((IMAGE_DIMENSION, IMAGE_DIMENSION), chunk.into()))
-            .zip(mnist.tst_lbl.chunks(IMAGE_SIZE))
+            .zip(mnist.tst_lbl.chunks(OUTPUT_SIZE))
             .map(|(image_parts, expected_class)| Self {
                 image_parts: image_parts.unwrap(),
-                expected_class: expected_class.into(),
+                expected_class: Array1::from_shape_vec(OUTPUT_SIZE, expected_class.into()).unwrap(),
             })
             .collect();
 
