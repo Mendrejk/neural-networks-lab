@@ -2,7 +2,6 @@ use crate::config::{IMAGE_SIZE, OUTPUT_SIZE};
 use crate::learn_data::LearnData;
 use crate::neural_layer::{ActivationFunction, NeuralLayer};
 use crate::soft_max_layer::SoftMaxLayer;
-use ndarray::Array1;
 
 pub struct NeuralNetwork {
     neural_layers: Vec<NeuralLayer>,
@@ -69,6 +68,11 @@ impl NeuralNetwork {
                     }
                 });
 
-        result_tuple.0 == learn_data.expected_class as usize
+        result_tuple.0
+            == learn_data
+                .expected_class
+                .iter()
+                .position(|&elem| elem == 1)
+                .unwrap()
     }
 }

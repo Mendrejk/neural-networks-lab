@@ -4,7 +4,7 @@ use ndarray::{Array1, Array2};
 
 pub struct LearnData {
     pub image_parts: Array2<u8>,
-    pub expected_class: u8, // TODO - enum
+    pub expected_class: Vec<u8>,
 }
 
 impl LearnData {
@@ -16,7 +16,7 @@ impl LearnData {
 impl LearnData {
     pub fn load_mnist() -> (Vec<Self>, Vec<Self>) {
         let mnist = MnistBuilder::new()
-            .label_format_digit()
+            .label_format_one_hot()
             .training_set_length(60_000)
             .test_set_length(10_000)
             .finalize();
@@ -25,20 +25,20 @@ impl LearnData {
             .trn_img
             .chunks(IMAGE_SIZE)
             .map(|chunk| Array2::from_shape_vec((IMAGE_DIMENSION, IMAGE_DIMENSION), chunk.into()))
-            .zip(mnist.trn_lbl.into_iter())
+            .zip(mnist.trn_lbl.chunks(IMAGE_SIZE))
             .map(|(image_parts, expected_class)| Self {
                 image_parts: image_parts.unwrap(),
-                expected_class,
+                expected_class: expected_class.into(),
             })
             .collect();
         let test_data = mnist
             .tst_img
             .chunks(IMAGE_SIZE)
             .map(|chunk| Array2::from_shape_vec((IMAGE_DIMENSION, IMAGE_DIMENSION), chunk.into()))
-            .zip(mnist.tst_lbl.into_iter())
+            .zip(mnist.tst_lbl.chunks(IMAGE_SIZE))
             .map(|(image_parts, expected_class)| Self {
                 image_parts: image_parts.unwrap(),
-                expected_class,
+                expected_class: expected_class.into(),
             })
             .collect();
 
