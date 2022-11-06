@@ -4,7 +4,7 @@ use rand::distributions::Distribution;
 use std::f64::consts::E;
 
 pub struct SoftMaxLayer {
-    weights: Array2<f64>,
+    pub weights: Array2<f64>,
     biases: Array1<f64>,
     pub stimuli: Option<Array1<f64>>,
 }

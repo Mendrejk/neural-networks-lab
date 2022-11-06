@@ -89,8 +89,8 @@ impl NeuralNetwork {
 
         println!("{:?}", result);
 
-        let delta = result - learn_data.expected_class.map(|elem| *elem as f64);
-        let derivatives = if let Some(soft_max_layer) = &self.soft_max_layer {
+        let out_delta = result - learn_data.expected_class.map(|elem| *elem as f64);
+        let out_derivatives = if let Some(soft_max_layer) = &self.soft_max_layer {
             soft_max_layer
                 .stimuli
                 .as_ref()
@@ -104,7 +104,32 @@ impl NeuralNetwork {
                 .unwrap()
                 .mapv(|x| last_layer.activation_function.calculate_derivative(x))
         };
+        let out_errors = out_delta * out_derivatives;
 
-        // let out_error = delta *
+        let last_index = if self.soft_max_layer.is_some() {
+            self.neural_layers.len() - 1
+        } else {
+            self.neural_layers.len() - 2
+        };
+
+        let mut next_errors = &out_errors;
+        let mut next_weights = if self.soft_max_layer.is_some() {
+            self.soft_max_layer.as_ref().unwrap().weights.clone()
+        } else {
+            self.neural_layers.last().unwrap().weights.clone()
+        };
+
+        for i in (0..=last_index).rev() {
+            let errors;
+            {
+                errors = Some(self.neural_layers[i].calculate_errors(&next_weights, next_errors));
+            }
+            self.neural_layers[i].errors = errors;
+            next_errors = self.neural_layers[i].errors.as_ref().unwrap();
+            next_weights = self.neural_layers[i].weights.clone();
+        }
+
+        let x = 'd';
+        // first.calculate_errors(&self.neural_layers.last().unwrap().weights, &out_errors);
     }
 }
