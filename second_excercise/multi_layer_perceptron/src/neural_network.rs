@@ -5,6 +5,7 @@ use crate::learn_data::LearnData;
 use crate::neural_layer::ActivationFunction;
 
 use ndarray::{Array1, Array2, Axis};
+use rand::seq::SliceRandom;
 
 pub struct NeuralNetwork {
     neural_layers: Vec<BatchedNeuralLayer>,
@@ -51,40 +52,38 @@ impl NeuralNetwork {
         }
     }
 
-    // pub fn calculate(&mut self, learn_data: &LearnData) -> bool {
-    //     let mut result = learn_data.to_neural_input();
-    //
-    //     for layer in &mut self.neural_layers {
-    //         result = layer.calculate(&result);
-    //     }
-    //
-    //     if let Some(soft_max_layer) = &mut self.soft_max_layer {
-    //         result = soft_max_layer.calculate(&result);
-    //     }
-    //
-    //     println!("{:?}", result);
-    //
-    //     let result_tuple =
-    //         result
-    //             .iter()
-    //             .enumerate()
-    //             .fold((0, result[0]), |(id_max, val_max), (id, val)| {
-    //                 if &val_max > val {
-    //                     (id_max, val_max)
-    //                 } else {
-    //                     (id, *val)
-    //                 }
-    //             });
-    //
-    //     result_tuple.0
-    //         == learn_data
-    //             .expected_class
-    //             .iter()
-    //             .position(|&elem| elem == 1)
-    //             .unwrap()
-    // }
+    pub fn calculate(&mut self, learn_data: &LearnData) -> bool {
+        let mut result = learn_data.to_neural_input();
 
-    pub fn learn_batch(&mut self, learn_batch: &[LearnData]) -> i32 {
+        for layer in &mut self.neural_layers {
+            result = layer.calculate(&result);
+        }
+
+        if let Some(soft_max_layer) = &mut self.soft_max_layer {
+            result = soft_max_layer.calculate(&result);
+        }
+
+        let result_tuple =
+            result
+                .iter()
+                .enumerate()
+                .fold((0, result[0]), |(id_max, val_max), (id, val)| {
+                    if &val_max > val {
+                        (id_max, val_max)
+                    } else {
+                        (id, *val)
+                    }
+                });
+
+        result_tuple.0
+            == learn_data
+                .expected_class
+                .iter()
+                .position(|&elem| elem == 1)
+                .unwrap()
+    }
+
+    pub fn learn_batch(&mut self, learn_batch: &[LearnData]) {
         let mut results = Array2::zeros((IMAGE_SIZE, BATCH_SIZE));
         for (batch_index, mut batch_result_row) in results.axis_iter_mut(Axis(1)).enumerate() {
             batch_result_row.assign(&learn_batch[batch_index].to_neural_input());
@@ -93,35 +92,11 @@ impl NeuralNetwork {
         let input_stimuli = results.clone();
 
         for layer in &mut self.neural_layers {
-            results = layer.calculate(&results);
+            results = layer.calculate_batch(&results);
         }
 
         if let Some(soft_max_layer) = &mut self.soft_max_layer {
-            results = soft_max_layer.calculate(&results);
-        }
-
-        let mut correct_count = 0;
-        for (batch_index, mut batch_results_row) in results.axis_iter_mut(Axis(1)).enumerate() {
-            let result_tuple = batch_results_row.iter().enumerate().fold(
-                (0, batch_results_row[0]),
-                |(id_max, val_max), (id, val)| {
-                    if &val_max > val {
-                        (id_max, val_max)
-                    } else {
-                        (id, *val)
-                    }
-                },
-            );
-
-            if result_tuple.0
-                == learn_batch[batch_index]
-                    .expected_class
-                    .iter()
-                    .position(|&elem| elem == 1)
-                    .unwrap()
-            {
-                correct_count += 1
-            };
+            results = soft_max_layer.calculate_batch(&results);
         }
 
         let mut out_deltas = Array2::zeros((OUTPUT_SIZE, BATCH_SIZE));
@@ -191,7 +166,23 @@ impl NeuralNetwork {
             layer.biases =
                 &layer.biases - UPDATE_FACTOR * layer.errors.as_ref().unwrap().sum_axis(Axis(1));
         }
+    }
 
-        correct_count
+    pub fn learn(&mut self, mut train_data: Vec<LearnData>, test_data: Vec<LearnData>) {
+        let mut rng = rand::thread_rng();
+        loop {
+            train_data.shuffle(&mut rng);
+
+            train_data
+                .chunks(BATCH_SIZE)
+                .for_each(|batch| self.learn_batch(batch));
+
+            let successes: usize = test_data
+                .iter()
+                .map(|data| self.calculate(data))
+                .filter(|result| *result)
+                .count();
+            println!("{}", successes as f64 / test_data.len() as f64);
+        }
     }
 }

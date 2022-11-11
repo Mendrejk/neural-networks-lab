@@ -39,7 +39,22 @@ impl BatchedSoftMaxLayer {
         }
     }
 
-    pub fn calculate(&mut self, inputs: &Array2<f64>) -> Array2<f64> {
+    pub fn calculate(&mut self, inputs: &Array1<f64>) -> Array1<f64> {
+        let stimuli = &self.weights.dot(inputs) + &self.biases;
+
+        let e_values = stimuli.mapv(|stimulus| E.powf(stimulus));
+        let e_sum = e_values.sum();
+
+        Array1::from(
+            stimuli
+                .iter()
+                .enumerate()
+                .map(|(index, _)| e_values[index] / e_sum)
+                .collect::<Vec<f64>>(),
+        )
+    }
+
+    pub fn calculate_batch(&mut self, inputs: &Array2<f64>) -> Array2<f64> {
         let mut stimuli = Array2::zeros((self.neuron_count, BATCH_SIZE));
         for (batch_index, mut batch_stimuli_row) in stimuli.axis_iter_mut(Axis(1)).enumerate() {
             batch_stimuli_row.assign(

@@ -13,11 +13,12 @@ mod soft_max_layer;
 
 fn main() {
     let (train_data, test_data) = LearnData::load_mnist();
-    let mut network =
-        NeuralNetwork::new(vec![5, 3, 2], ActivationFunction::HiperbolicTangent, false);
+    let mut network = NeuralNetwork::new(
+        vec![40, 60, 80],
+        ActivationFunction::HiperbolicTangent,
+        true,
+    );
     // println!("{}", network.calculate(train_data.first().unwrap()));
 
-    if let Some(batch) = train_data.chunks(BATCH_SIZE).next() {
-        network.learn_batch(batch);
-    }
+    network.learn(train_data, test_data);
 }

@@ -1,8 +1,7 @@
 use crate::config::STANDARD_DISTRIBUTION;
 use crate::{ActivationFunction, BATCH_SIZE};
-use ndarray::{Array, Array1, Array2, Array3, Axis};
+use ndarray::{Array1, Array2, Axis};
 use rand::distributions::Distribution;
-use std::ops::Index;
 
 pub struct BatchedNeuralLayer {
     pub weights: Array2<f64>,
@@ -45,7 +44,12 @@ impl BatchedNeuralLayer {
         }
     }
 
-    pub fn calculate(&mut self, inputs: &Array2<f64>) -> Array2<f64> {
+    pub fn calculate(&mut self, inputs: &Array1<f64>) -> Array1<f64> {
+        let stimuli = &self.weights.dot(inputs) + &self.biases;
+        stimuli.mapv(|stimulus| self.activation_function.calculate(stimulus))
+    }
+
+    pub fn calculate_batch(&mut self, inputs: &Array2<f64>) -> Array2<f64> {
         let mut stimuli = Array2::zeros((self.neuron_count, BATCH_SIZE));
         for (batch_index, mut batch_stimuli_row) in stimuli.axis_iter_mut(Axis(1)).enumerate() {
             batch_stimuli_row.assign(
