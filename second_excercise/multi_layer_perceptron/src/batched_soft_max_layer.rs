@@ -5,9 +5,10 @@ use rand::distributions::Distribution;
 use std::f64::consts::E;
 
 pub struct BatchedSoftMaxLayer {
-    pub weights: Array3<f64>,
-    biases: Array2<f64>,
+    pub weights: Array2<f64>,
+    biases: Array1<f64>,
     pub stimuli: Option<Array2<f64>>,
+    pub errors: Option<Array2<f64>>,
     neuron_count: usize,
 }
 
@@ -16,26 +17,24 @@ impl BatchedSoftMaxLayer {
         let mut rng = rand::thread_rng();
         let normal_distribution = rand_distr::Normal::new(0.0, STANDARD_DISTRIBUTION).unwrap();
 
-        let mut weights = Array3::zeros((neuron_count, input_size, BATCH_SIZE));
+        let mut weights = Array2::zeros((neuron_count, input_size));
         for y in 0..neuron_count {
             for x in 0..input_size {
-                for z in 0..BATCH_SIZE {
-                    weights[[y, x, z]] = normal_distribution.sample(&mut rng) as f64;
-                }
+                weights[[y, x]] = normal_distribution.sample(&mut rng) as f64;
             }
         }
 
-        let mut biases = Array2::zeros((neuron_count, BATCH_SIZE));
-        for y in 0..neuron_count {
-            for x in 0..BATCH_SIZE {
-                biases[[y, x]] = normal_distribution.sample(&mut rng) as f64;
-            }
-        }
+        let biases = Array1::from(
+            (0..neuron_count)
+                .map(|_| normal_distribution.sample(&mut rng) as f64)
+                .collect::<Vec<f64>>(),
+        );
 
         Self {
             weights,
             biases,
             stimuli: None,
+            errors: None,
             neuron_count,
         }
     }
@@ -44,11 +43,7 @@ impl BatchedSoftMaxLayer {
         let mut stimuli = Array2::zeros((self.neuron_count, BATCH_SIZE));
         for (batch_index, mut batch_stimuli_row) in stimuli.axis_iter_mut(Axis(1)).enumerate() {
             batch_stimuli_row.assign(
-                &(&self
-                    .weights
-                    .index_axis(Axis(2), batch_index)
-                    .dot(&inputs.index_axis(Axis(1), batch_index))
-                    + &self.biases.index_axis(Axis(1), batch_index)),
+                &(&self.weights.dot(&inputs.index_axis(Axis(1), batch_index)) + &self.biases),
             );
         }
 

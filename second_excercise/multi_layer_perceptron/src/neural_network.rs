@@ -1,10 +1,10 @@
 use crate::batched_neural_layer::BatchedNeuralLayer;
 use crate::batched_soft_max_layer::BatchedSoftMaxLayer;
-use crate::config::{BATCH_SIZE, IMAGE_SIZE, OUTPUT_SIZE};
+use crate::config::{BATCH_SIZE, IMAGE_SIZE, OUTPUT_SIZE, UPDATE_FACTOR};
 use crate::learn_data::LearnData;
-use crate::neural_layer::{ActivationFunction, NeuralLayer};
-use crate::soft_max_layer::SoftMaxLayer;
-use ndarray::{Array2, Axis};
+use crate::neural_layer::ActivationFunction;
+
+use ndarray::{Array1, Array2, Axis};
 
 pub struct NeuralNetwork {
     neural_layers: Vec<BatchedNeuralLayer>,
@@ -84,11 +84,13 @@ impl NeuralNetwork {
     //             .unwrap()
     // }
 
-    pub fn learn(&mut self, learn_batch: &[LearnData]) {
+    pub fn learn_batch(&mut self, learn_batch: &[LearnData]) -> i32 {
         let mut results = Array2::zeros((IMAGE_SIZE, BATCH_SIZE));
         for (batch_index, mut batch_result_row) in results.axis_iter_mut(Axis(1)).enumerate() {
-            batch_result_row.assign(&mut learn_batch[batch_index].to_neural_input());
+            batch_result_row.assign(&learn_batch[batch_index].to_neural_input());
         }
+
+        let input_stimuli = results.clone();
 
         for layer in &mut self.neural_layers {
             results = layer.calculate(&results);
@@ -98,7 +100,29 @@ impl NeuralNetwork {
             results = soft_max_layer.calculate(&results);
         }
 
-        println!("{:?}", results);
+        let mut correct_count = 0;
+        for (batch_index, mut batch_results_row) in results.axis_iter_mut(Axis(1)).enumerate() {
+            let result_tuple = batch_results_row.iter().enumerate().fold(
+                (0, batch_results_row[0]),
+                |(id_max, val_max), (id, val)| {
+                    if &val_max > val {
+                        (id_max, val_max)
+                    } else {
+                        (id, *val)
+                    }
+                },
+            );
+
+            if result_tuple.0
+                == learn_batch[batch_index]
+                    .expected_class
+                    .iter()
+                    .position(|&elem| elem == 1)
+                    .unwrap()
+            {
+                correct_count += 1
+            };
+        }
 
         let mut out_deltas = Array2::zeros((OUTPUT_SIZE, BATCH_SIZE));
         for y in 0..OUTPUT_SIZE {
@@ -123,6 +147,13 @@ impl NeuralNetwork {
         };
         let out_errors = out_deltas * out_derivatives;
 
+        if self.soft_max_layer.is_some() {
+            self.soft_max_layer.as_mut().unwrap().errors = Some(out_errors.clone());
+        } else {
+            let last = self.neural_layers.len() - 1;
+            self.neural_layers[last].errors = Some(out_errors.clone());
+        }
+
         let last_index = if self.soft_max_layer.is_some() {
             self.neural_layers.len() - 1
         } else {
@@ -146,7 +177,21 @@ impl NeuralNetwork {
             next_weights = self.neural_layers[i].weights.clone();
         }
 
-        let x = 'd';
-        // first.calculate_errors(&self.neural_layers.last().unwrap().weights, &out_errors);
+        let mut previous_stimuli = &input_stimuli;
+        for layer in &mut self.neural_layers {
+            layer.weights = &layer.weights
+                - UPDATE_FACTOR
+                    * layer
+                        .errors
+                        .as_ref()
+                        .unwrap()
+                        .dot(&previous_stimuli.clone().reversed_axes());
+            previous_stimuli = layer.stimuli.as_ref().unwrap();
+
+            layer.biases =
+                &layer.biases - UPDATE_FACTOR * layer.errors.as_ref().unwrap().sum_axis(Axis(1));
+        }
+
+        correct_count
     }
 }

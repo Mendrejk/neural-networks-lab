@@ -18,6 +18,6 @@ fn main() {
     // println!("{}", network.calculate(train_data.first().unwrap()));
 
     if let Some(batch) = train_data.chunks(BATCH_SIZE).next() {
-        network.learn(batch);
+        network.learn_batch(batch);
     }
 }

@@ -5,8 +5,8 @@ use rand::distributions::Distribution;
 use std::ops::Index;
 
 pub struct BatchedNeuralLayer {
-    pub weights: Array3<f64>,
-    biases: Array2<f64>,
+    pub weights: Array2<f64>,
+    pub(crate) biases: Array1<f64>,
     pub activation_function: ActivationFunction,
     pub stimuli: Option<Array2<f64>>,
     pub errors: Option<Array2<f64>>,
@@ -22,22 +22,18 @@ impl BatchedNeuralLayer {
         let mut rng = rand::thread_rng();
         let normal_distribution = rand_distr::Normal::new(0.0, STANDARD_DISTRIBUTION).unwrap();
 
-        let mut weights = Array3::zeros((neuron_count, input_size, BATCH_SIZE));
+        let mut weights = Array2::zeros((neuron_count, input_size));
         for y in 0..neuron_count {
             for x in 0..input_size {
-                for z in 0..BATCH_SIZE {
-                    weights[[y, x, z]] = normal_distribution.sample(&mut rng) as f64;
-                }
+                weights[[y, x]] = normal_distribution.sample(&mut rng) as f64;
             }
         }
 
-        let mut biases = Array2::zeros((neuron_count, BATCH_SIZE));
-
-        for y in 0..neuron_count {
-            for x in 0..BATCH_SIZE {
-                biases[[y, x]] = normal_distribution.sample(&mut rng) as f64;
-            }
-        }
+        let biases = Array1::from(
+            (0..neuron_count)
+                .map(|_| normal_distribution.sample(&mut rng) as f64)
+                .collect::<Vec<f64>>(),
+        );
 
         Self {
             weights,
@@ -53,11 +49,7 @@ impl BatchedNeuralLayer {
         let mut stimuli = Array2::zeros((self.neuron_count, BATCH_SIZE));
         for (batch_index, mut batch_stimuli_row) in stimuli.axis_iter_mut(Axis(1)).enumerate() {
             batch_stimuli_row.assign(
-                &(&self
-                    .weights
-                    .index_axis(Axis(2), batch_index)
-                    .dot(&inputs.index_axis(Axis(1), batch_index))
-                    + &self.biases.index_axis(Axis(1), batch_index)),
+                &(&self.weights.dot(&inputs.index_axis(Axis(1), batch_index)) + &self.biases),
             );
         }
 
@@ -69,14 +61,13 @@ impl BatchedNeuralLayer {
 
     pub fn calculate_errors(
         &self,
-        next_weights: &Array3<f64>,
+        next_weights: &Array2<f64>,
         next_errors: &Array2<f64>,
     ) -> Array2<f64> {
         let mut next_res = Array2::zeros((self.neuron_count, BATCH_SIZE));
         for (batch_index, mut batch_next_res_row) in next_res.axis_iter_mut(Axis(1)).enumerate() {
             batch_next_res_row.assign(
                 &next_weights
-                    .index_axis(Axis(2), batch_index)
                     .t()
                     .dot(&next_errors.index_axis(Axis(1), batch_index)),
             );
