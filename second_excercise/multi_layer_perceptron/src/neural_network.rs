@@ -4,7 +4,7 @@ use crate::config::{BATCH_SIZE, IMAGE_SIZE, OUTPUT_SIZE, UPDATE_FACTOR};
 use crate::learn_data::LearnData;
 use crate::neural_layer::ActivationFunction;
 
-use ndarray::{Array1, Array2, Axis};
+use ndarray::{Array2, Axis};
 use rand::seq::SliceRandom;
 
 pub struct NeuralNetwork {
@@ -52,7 +52,7 @@ impl NeuralNetwork {
         }
     }
 
-    pub fn calculate(&mut self, learn_data: &LearnData) -> bool {
+    pub fn calculate(&mut self, learn_data: &LearnData) -> (bool, f64) {
         let mut result = learn_data.to_neural_input();
 
         for layer in &mut self.neural_layers {
@@ -75,12 +75,16 @@ impl NeuralNetwork {
                     }
                 });
 
-        result_tuple.0
+        let is_correct = result_tuple.0
             == learn_data
                 .expected_class
                 .iter()
                 .position(|&elem| elem == 1)
-                .unwrap()
+                .unwrap();
+        let likelihood =
+            (-1.0 * result.mapv(|x| x.ln()) * &learn_data.expected_class.mapv(|x| x as f64)).sum();
+
+        (is_correct, likelihood)
     }
 
     pub fn learn_batch(&mut self, learn_batch: &[LearnData]) {
@@ -177,12 +181,18 @@ impl NeuralNetwork {
                 .chunks(BATCH_SIZE)
                 .for_each(|batch| self.learn_batch(batch));
 
-            let successes: usize = test_data
-                .iter()
-                .map(|data| self.calculate(data))
-                .filter(|result| *result)
-                .count();
-            println!("{}", successes as f64 / test_data.len() as f64);
+            let (successes, likelihood) = test_data.iter().map(|data| self.calculate(data)).fold(
+                (0, 0.0),
+                |(correct, sum_likelihood), (current, likelihood)| {
+                    let current_int = if current { 1 } else { 0 };
+                    return (correct + current_int, sum_likelihood + likelihood);
+                },
+            );
+            println!(
+                "{}, {}",
+                successes as f64 / test_data.len() as f64,
+                likelihood
+            );
         }
     }
 }
