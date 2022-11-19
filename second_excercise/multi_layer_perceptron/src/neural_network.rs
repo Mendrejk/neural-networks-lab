@@ -174,7 +174,16 @@ impl NeuralNetwork {
 
     pub fn learn(&mut self, mut train_data: Vec<LearnData>, test_data: Vec<LearnData>) {
         let mut rng = rand::thread_rng();
+        let mut i = 0;
+        let mut best_fitness = f64::MIN;
+        let mut best_i = -1;
+
         loop {
+            i += 1;
+            if i > 30 {
+                break;
+            }
+
             train_data.shuffle(&mut rng);
 
             train_data
@@ -185,14 +194,18 @@ impl NeuralNetwork {
                 (0, 0.0),
                 |(correct, sum_likelihood), (current, likelihood)| {
                     let current_int = if current { 1 } else { 0 };
-                    return (correct + current_int, sum_likelihood + likelihood);
+                    (correct + current_int, sum_likelihood + likelihood)
                 },
             );
-            println!(
-                "{}, {}",
-                successes as f64 / test_data.len() as f64,
-                likelihood
-            );
+
+            let current_fitness = successes as f64 / test_data.len() as f64;
+            if current_fitness > best_fitness {
+                best_fitness = current_fitness;
+                best_i = i;
+            }
+
+            println!("{}: {}, {}", i, current_fitness, likelihood);
         }
+        println!("{}, best i: {}", best_fitness, best_i);
     }
 }
