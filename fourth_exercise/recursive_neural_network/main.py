@@ -2,7 +2,7 @@ import csv
 
 from keras.datasets import imdb
 from keras.models import Sequential
-from keras.layers import Embedding, SimpleRNN, Dense
+from keras.layers import Embedding, SimpleRNN, Dense, LSTM
 from keras.utils import pad_sequences
 import tensorflow as tf
 from keras import backend
@@ -22,6 +22,7 @@ def create_model(embedding_dim, mask_zero):
     new_model = Sequential()
     new_model.add(Embedding(max_features, embedding_dim, mask_zero=mask_zero, input_length=max_len))
     new_model.add(SimpleRNN(100))
+    # new_model.add(LSTM(100)) # alternative to SimpleRNN
     new_model.add(Dense(1, activation="sigmoid"))
     new_model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
