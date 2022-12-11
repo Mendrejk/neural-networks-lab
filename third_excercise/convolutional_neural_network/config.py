@@ -8,5 +8,5 @@ KERNEL_DIMENSION: Final[int] = 3
 POOl_DIMENSION: Final[int] = 2
 PERCEPTRON_NEURON_COUNT: Final[int] = 80
 
-BATCH_SIZE: Final[int] = 20
+BATCH_SIZE: Final[int] = 10
 EPOCHS: Final[int] = 10

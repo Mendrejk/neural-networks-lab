@@ -26,32 +26,55 @@ def get_data() -> Tuple[Tuple[NDArray[np.int_], NDArray[np.int_]], Tuple[NDArray
     return (train_data, train_labels), (test_data, test_labels)
 
 
-def create_network() -> Sequential:
+def create_convolutional_network() -> Sequential:
     convolutional_network: Sequential = keras.Sequential(
         [
             keras.Input(shape=(INPUT_DIMENSION, INPUT_DIMENSION, 1)),
-            layers.Conv2D(FILTER_COUNT, kernel_size=(KERNEL_DIMENSION, KERNEL_DIMENSION), activation="relu"),
-            layers.MaxPool2D(pool_size=(POOl_DIMENSION, POOl_DIMENSION)),
+            layers.Conv2D(FILTER_COUNT, kernel_size=(KERNEL_DIMENSION, KERNEL_DIMENSION), activation="relu", strides=(1, 1)),
+            # layers.BatchNormalization(),
+            # layers.Activation(activation=keras.activations.relu),
+            layers.MaxPool2D(pool_size=(POOl_DIMENSION, POOl_DIMENSION), strides=(2, 2)),
             layers.Flatten(),
             layers.Dense(PERCEPTRON_NEURON_COUNT, activation="tanh"),
             layers.Dense(OUTPUT_SIZE, activation="softmax"),
         ]
     )
 
-    print(convolutional_network.summary())
     return convolutional_network
 
 
+def create_mlp_network() -> Sequential:
+    return keras.Sequential(
+        [
+            layers.Flatten(),
+            keras.Input(shape=(INPUT_DIMENSION * INPUT_DIMENSION, 1)),
+            layers.Dense(40, activation="tanh"),
+            layers.Dense(60, activation="tanh"),
+            layers.Dense(80, activation="tanh"),
+            layers.Dense(OUTPUT_SIZE, activation="softmax"),
+        ]
+    )
+
+
 def main():
+    file_id = '14'
+    conv_path = 'data/' + file_id + '-conv.csv'
+    mlp_path = 'data/' + file_id + '-mlp.csv'
+
     ((train_data, train_labels), (test_data, test_labels)) = get_data()
-    network: Sequential = create_network()
 
-    network.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
-    network.fit(train_data, train_labels, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split=0.1)
+    conv_logger = keras.callbacks.CSVLogger(conv_path)
+    convolutional_network: Sequential = create_convolutional_network()
+    convolutional_network.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+    convolutional_network.fit(train_data, train_labels, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split=0.1,
+                              verbose=1, callbacks=conv_logger)
+    # convolutional_score = convolutional_network.evaluate(test_data, test_labels, verbose=0, callbacks=conv_logger)
 
-    score = network.evaluate(test_data, test_labels, verbose=0)
-    print("Test loss:", score[0])
-    print("Test accuracy:", score[1])
+    # mlp_logger = keras.callbacks.CSVLogger(mlp_path)
+    # mlp_network: Sequential = create_mlp_network()
+    # mlp_network.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+    # mlp_network.fit(train_data, train_labels, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split=0.1,
+    #                           verbose=1, callbacks=mlp_logger)
 
 
 if __name__ == '__main__':
